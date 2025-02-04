@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+       body {
+           font-family: Arial, sans-serif;
+           margin: 5px 5px 20px 5px;
+           background: url('/static/img.png') no-repeat center center;
+           background-size: cover;
+            }
+
+        h1 {
+            text-align: center;
+            color: #3e8bf8;
+            font-size: 40px;
+            padding-left: 100px;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            /* background: rgb(255, 255, 255); */
+            /* padding: 20px; */
+            padding-left: 80px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        
+        input, select {
+            width: 95%;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #07765e;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #286f81;
+        }
+
+
+.button-result {
+    display: flex;
+    align-items: center; /* Align button and result text vertically */
+    gap: 15px; /* Space between button and result */
+    margin-top: 10px;
+    margin-bottom: 80px;
+}
+
+#result {
+    color: #0e8cb3;
+    font-size: 18px;
+    font-weight: bold;
+    min-width: 150px;
+    text-align: left;
+    background-color:white; /* Light background */
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    min-height: 30px; /* Ensure space for text */
+    display: flex; /* Center content */
+    align-items: center;
+    justify-content: center;
+}
+
+
+    </style>
+</head>
+<body>
+    <h1>House Price Prediction</h1>
+    <form id="predictionForm">
+        <input type="number" step="0.01" placeholder="Area (sq ft)" name="area" required>
+        <input type="number" placeholder="Number of Bedrooms" name="bedrooms" required>
+        <input type="number" placeholder="Number of Bathrooms" name="bathrooms" required>
+        <input type="number" placeholder="Number of Stories" name="stories" required>
+        <input type="number" placeholder="Number of Parkings" name="parking" required>
+        <select name="mainroad" required>
+            <option value="">Select Main Road Access</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        <select name="guestroom" required>
+            <option value="">Select Guest Room</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        <select name="basement" required>
+            <option value="">Select Basement</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        <select name="hotwaterheating" required>
+            <option value="">Select Hot Water Heating</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        <select name="airconditioning" required>
+            <option value="">Select Air Conditioning</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        <select name="prefarea" required>
+            <option value="">Select Preferred Area</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        <select name="furnishingstatus" required>
+            <option value="">Select Furnishing Status</option>
+            <option value="furnished">Furnished</option>
+            <option value="semi-furnished">Semi-Furnished</option>
+            <option value="unfurnished">Unfurnished</option>
+        </select>
+    <div class="button-result">
+    <button type="submit">Predict Price</button>
+    <div id="result"></div>
+    </div>
+
+    </form>
+    
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('http://localhost:8000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerText = result.predicted_price ? 
+                `Predicted Price: $${result.predicted_price}` : 
+                `Error: ${result.error}`;
+        });
+    </script>
+</body>
+</html>
